@@ -1,4 +1,4 @@
-# BudgetBuddy# BudgetBuddy
+# BudgetBuddy
 
 ## About
 
