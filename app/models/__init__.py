@@ -1,3 +1,4 @@
-from .db import db
+from .db import db, environment, SCHEMA, add_prefix_for_prod
 from .user import User
-from .db import environment, SCHEMA
+from .category import Category
+from .transaction import Transaction
