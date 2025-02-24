@@ -45,9 +45,17 @@ BudgetBuddy is a personal finance tracking application that helps users monitor 
 
 Instructions for setting up and running the project will be added during development.
 
+## Links
+
+- [Live Site](coming soon)
+- [MVP Feature List](https://github.com/yourusername/BudgetBuddy/wiki/MVP-Features)
+- [Database Schema](https://github.com/yourusername/BudgetBuddy/wiki/Database-Schema)
+- [User Stories](https://github.com/yourusername/BudgetBuddy/wiki/User-Stories)
+- [Wireframes](https://github.com/yourusername/BudgetBuddy/wiki/Wireframes)
+
 ## Contact
 
 Muhammad Elshareif
 
-- [GitHub](https://github.com/muhammadelshareif)
-- [LinkedIn](https://www.linkedin.com/in/muhammad-elshareif-746145206/)
+- [GitHub](https://github.com/yourusername)
+- [LinkedIn](https://www.linkedin.com/in/yourusername)
