@@ -82,7 +82,7 @@ def update_transaction(id):
     
     data = request.json
     
-    # If category is being updated, validate it belongs to the user
+    # If category is being updated, validate it belongs to user
     if 'category_id' in data:
         category = Category.query.get(data['category_id'])
         if not category or category.user_id != current_user.id:

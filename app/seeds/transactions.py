@@ -52,7 +52,7 @@ def seed_transactions():
         }
     ]
     
-    # Assign transactions to demo user (assuming user id 1 is the demo user)
+    # Assign transactions to demo user
     for transaction_data in sample_transactions:
         transaction = Transaction(
             user_id=1,
@@ -68,7 +68,7 @@ def seed_transactions():
     
     db.session.commit()
 
-# Uses a raw SQL query to TRUNCATE the transactions table.
+# SQL query to TRUNCATE the transactions table.
 def undo_transactions():
     if environment == "production":
         db.session.execute(f"TRUNCATE table {SCHEMA}.transactions RESTART IDENTITY CASCADE;")

@@ -1,19 +1,22 @@
 import { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { FaUserCircle } from 'react-icons/fa';
+import { FaUserCircle } from "react-icons/fa";
 import { thunkLogout } from "../../redux/session";
 import OpenModalMenuItem from "./OpenModalMenuItem";
 import LoginFormModal from "../LoginFormModal";
 import SignupFormModal from "../SignupFormModal";
+import { useNavigate } from "react-router-dom";
+import "./ProfileButton.css";
 
 function ProfileButton() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [showMenu, setShowMenu] = useState(false);
   const user = useSelector((store) => store.session.user);
   const ulRef = useRef();
 
   const toggleMenu = (e) => {
-    e.stopPropagation(); // Keep from bubbling up to document and triggering closeMenu
+    e.stopPropagation();
     setShowMenu(!showMenu);
   };
 
@@ -40,37 +43,73 @@ function ProfileButton() {
   };
 
   return (
-    <>
-      <button onClick={toggleMenu}>
-        <FaUserCircle />
+    <div className="profile-container">
+      <button onClick={toggleMenu} className="profile-icon-button">
+        <FaUserCircle size={28} />
       </button>
       {showMenu && (
-        <ul className={"profile-dropdown"} ref={ulRef}>
+        <div className="profile-dropdown" ref={ulRef}>
           {user ? (
             <>
-              <li>{user.username}</li>
-              <li>{user.email}</li>
-              <li>
-                <button onClick={logout}>Log Out</button>
-              </li>
+              <div className="user-info">
+                <p className="username">{user.username}</p>
+                <p className="email">{user.email}</p>
+              </div>
+              <div className="dropdown-divider"></div>
+              {/* Navigation links */}
+              <div className="dropdown-links">
+                <button
+                  onClick={() => {
+                    navigate("/dashboard");
+                    closeMenu();
+                  }}
+                  className="dropdown-item"
+                >
+                  Dashboard
+                </button>
+                <button
+                  onClick={() => {
+                    navigate("/transactions");
+                    closeMenu();
+                  }}
+                  className="dropdown-item"
+                >
+                  Transactions
+                </button>
+                <button
+                  onClick={() => {
+                    navigate("/categories");
+                    closeMenu();
+                  }}
+                  className="dropdown-item"
+                >
+                  Categories
+                </button>
+              </div>
+              <div className="dropdown-divider"></div>
+              <button onClick={logout} className="dropdown-item logout-button">
+                Log Out
+              </button>
             </>
           ) : (
-            <>
+            <div className="auth-options">
               <OpenModalMenuItem
                 itemText="Log In"
                 onItemClick={closeMenu}
                 modalComponent={<LoginFormModal />}
+                className="dropdown-item"
               />
               <OpenModalMenuItem
                 itemText="Sign Up"
                 onItemClick={closeMenu}
                 modalComponent={<SignupFormModal />}
+                className="dropdown-item"
               />
-            </>
+            </div>
           )}
-        </ul>
+        </div>
       )}
-    </>
+    </div>
   );
 }
 

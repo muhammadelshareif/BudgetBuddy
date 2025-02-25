@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { thunkLogin } from "../../redux/session";
 import { useDispatch, useSelector } from "react-redux";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate, useNavigate, Link } from "react-router-dom";
 import "./LoginForm.css";
 
 function LoginFormPage() {
@@ -31,35 +31,78 @@ function LoginFormPage() {
     }
   };
 
+  const handleDemoLogin = async () => {
+    await dispatch(
+      thunkLogin({
+        email: "demo@aa.io",
+        password: "password",
+      })
+    );
+    navigate("/");
+  };
+
   return (
-    <>
-      <h1>Log In</h1>
-      {errors.length > 0 &&
-        errors.map((message) => <p key={message}>{message}</p>)}
-      <form onSubmit={handleSubmit}>
-        <label>
-          Email
-          <input
-            type="text"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </label>
-        {errors.email && <p>{errors.email}</p>}
-        <label>
-          Password
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </label>
-        {errors.password && <p>{errors.password}</p>}
-        <button type="submit">Log In</button>
-      </form>
-    </>
+    <div className="login-page">
+      <div className="login-container">
+        <div className="login-header">
+          <h1>Welcome to BudgetBuddy</h1>
+          <p>Track your finances with ease</p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="login-form">
+          {errors.length > 0 && (
+            <div className="errors-container">
+              {errors.map((message) => (
+                <p key={message} className="error-message">
+                  {message}
+                </p>
+              ))}
+            </div>
+          )}
+
+          <div className="form-group">
+            <label htmlFor="email">Email</label>
+            <input
+              id="email"
+              type="text"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+            {errors.email && <p className="error-message">{errors.email}</p>}
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="password">Password</label>
+            <input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            {errors.password && (
+              <p className="error-message">{errors.password}</p>
+            )}
+          </div>
+
+          <button type="submit" className="login-button">
+            Log In
+          </button>
+          <button
+            type="button"
+            onClick={handleDemoLogin}
+            className="demo-button"
+          >
+            Demo User
+          </button>
+        </form>
+
+        <div className="login-footer">
+          Don&apos;t have an account? <Link to="/signup">Sign up</Link>
+        </div>
+      </div>
+    </div>
   );
 }
 

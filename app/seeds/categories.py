@@ -16,7 +16,7 @@ def seed_categories():
         {'name': 'Income', 'description': 'Salary, dividends, etc.'},
     ]
     
-    # Assign categories to demo user (assuming user id 1 is the demo user)
+    # Assign categories to demo user
     for category_data in default_categories:
         category = Category(
             user_id=1,
