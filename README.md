@@ -53,8 +53,9 @@ BudgetBuddy is a personal finance tracking application that helps users monitor 
 
 1. Clone the repository:
 
-   git clone https://github.com/yourusername/BudgetBuddy.git
-   cd BudgetBuddy
+   - git clone https://github.com/yourusername/BudgetBuddy.git
+
+   - cd BudgetBuddy
 
 2. Create and activate a Python virtual environment:
 
