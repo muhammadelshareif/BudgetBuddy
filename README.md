@@ -43,34 +43,39 @@ BudgetBuddy is a personal finance tracking application that helps users monitor 
 
 ## Getting Started
 
-Prerequisites
+### Prerequisites
 
 - Python 3.9 or higher
 - Node.js 16 or higher
 - PostgreSQL
 
-## Local Development Setup
+### Local Development Setup
 
-1. Clone the repository
+1. Clone the repository:
 
-git clone https://github.com/yourusername/BudgetBuddy.git
-cd BudgetBuddy
+   git clone https://github.com/yourusername/BudgetBuddy.git
+   cd BudgetBuddy
 
-2. Create and activate a Python virtual environment
+2. Create and activate a Python virtual environment:
+
    pipenv install -r requirements.txt
    pipenv shell
 
-3. Set up environment variables
+3. Set up environment variables:
+
    cp .env.example .env
 
-4. Create and seed the database
+4. Create and seed the database:
+
    flask db upgrade
    flask seed all
 
-5. Start the Flask backend server
+5. Start the Flask backend server:
+
    flask run
 
-6. In a new terminal, install frontend dependencies and start the development server
+6. In a new terminal, install frontend dependencies and start the development server:
+
    cd react-vite
    npm install
    npm run dev
@@ -86,11 +91,11 @@ Password: password
 
 ## Links
 
-- [Live Site](coming soon)
-- [MVP Feature List](https://github.com/yourusername/BudgetBuddy/wiki/MVP-Features)
-- [Database Schema](https://github.com/yourusername/BudgetBuddy/wiki/Database-Schema)
-- [User Stories](https://github.com/yourusername/BudgetBuddy/wiki/User-Stories)
-- [Wireframes](https://github.com/yourusername/BudgetBuddy/wiki/Wireframes)
+- [Live Site](https://budgetbuddy-c5xv.onrender.com)
+- [MVP Feature List](https://github.com/muhammadelshareif/BudgetBuddy/wiki/MVP-Features)
+- [Database Schema](https://github.com/muhammadelshareif/BudgetBuddy/wiki/Database-Schema)
+- [User Stories](https://github.com/muhammadelshareif/BudgetBuddy/wiki/User-Stories)
+- [Wireframes](https://github.com/muhammadelshareif/BudgetBuddy/wiki/Wireframes)
 
 ## Contact
 
