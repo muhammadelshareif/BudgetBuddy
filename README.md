@@ -58,27 +58,31 @@ BudgetBuddy is a personal finance tracking application that helps users monitor 
 
 2. Create and activate a Python virtual environment:
 
-   pipenv install -r requirements.txt
-   pipenv shell
+   - pipenv install -r requirements.txt
+
+   - pipenv shell
 
 3. Set up environment variables:
 
-   cp .env.example .env
+   - cp .env.example .env
 
 4. Create and seed the database:
 
-   flask db upgrade
-   flask seed all
+   - flask db upgrade
+
+   - flask seed all
 
 5. Start the Flask backend server:
 
-   flask run
+   - flask run
 
 6. In a new terminal, install frontend dependencies and start the development server:
 
-   cd react-vite
-   npm install
-   npm run dev
+   - cd react-vite
+
+   - npm install
+
+   - npm run dev
 
 7. Visit http://localhost:5173 in your browser to see the application
 
@@ -86,8 +90,9 @@ BudgetBuddy is a personal finance tracking application that helps users monitor 
 
 You can log in using the demo user credentials:
 
-Email: demo@aa.io
-Password: password
+- Email: demo@aa.io
+
+- Password: password
 
 ## Links
 
