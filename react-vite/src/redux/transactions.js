@@ -1,4 +1,6 @@
 // Action Types
+import { getCategories } from "./categories";
+
 const LOAD_TRANSACTIONS = "transactions/LOAD_TRANSACTIONS";
 const ADD_TRANSACTION = "transactions/ADD_TRANSACTION";
 const UPDATE_TRANSACTION = "transactions/UPDATE_TRANSACTION";
@@ -48,6 +50,8 @@ export const createTransaction = (transactionData) => async (dispatch) => {
   if (response.ok) {
     const newTransaction = await response.json();
     dispatch(addTransaction(newTransaction));
+    // Refresh categories in case this affects summaries
+    dispatch(getCategories());
     return newTransaction;
   }
 };
@@ -113,6 +117,9 @@ const transactionReducer = (state = initialState, action) => {
         byId: newById,
         allIds: state.allIds.filter((id) => id !== action.transactionId),
       };
+    }
+    case "session/clearUserData": {
+      return { byId: {}, allIds: [] };
     }
 
     default:

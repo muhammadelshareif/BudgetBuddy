@@ -1,4 +1,6 @@
 // Action Types
+import { getTransactions } from "./transactions";
+
 const LOAD_CATEGORIES = "categories/LOAD_CATEGORIES";
 const ADD_CATEGORY = "categories/ADD_CATEGORY";
 const UPDATE_CATEGORY = "categories/UPDATE_CATEGORY";
@@ -75,6 +77,8 @@ export const deleteCategory = (categoryId) => async (dispatch) => {
 
   if (response.ok) {
     dispatch(removeCategory(categoryId));
+    // Also refresh transactions since they may be affected
+    dispatch(getTransactions());
     return { success: true };
   }
 };
@@ -113,6 +117,9 @@ const categoryReducer = (state = initialState, action) => {
         byId: newById,
         allIds: state.allIds.filter((id) => id !== action.categoryId),
       };
+    }
+    case "session/clearUserData": {
+      return { byId: {}, allIds: [] };
     }
 
     default:

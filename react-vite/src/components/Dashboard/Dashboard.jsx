@@ -1,5 +1,6 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useLocation } from "react-router-dom";
 import { getTransactions } from "../../redux/transactions";
 import { getCategories } from "../../redux/categories";
 import { Link } from "react-router-dom";
@@ -7,6 +8,11 @@ import "./Dashboard.css";
 
 function Dashboard() {
   const dispatch = useDispatch();
+  const location = useLocation();
+  const sessionUser = useSelector((state) => state.session.user);
+
+  // Track loading state
+  const [isLoading, setIsLoading] = useState(true);
 
   // Get state with fallbacks for when it's not initialized yet
   const transactionsState = useSelector((state) => state.transactions) || {
@@ -17,6 +23,13 @@ function Dashboard() {
     byId: {},
     allIds: [],
   };
+
+  // Create a refresh function
+  const refreshData = useCallback(async () => {
+    setIsLoading(true);
+    await Promise.all([dispatch(getTransactions()), dispatch(getCategories())]);
+    setIsLoading(false);
+  }, [dispatch]);
 
   // Memoize transactions array to prevent recreation on each render
   const transactions = useMemo(() => {
@@ -36,10 +49,17 @@ function Dashboard() {
     balance: 0,
   });
 
+  // Refresh when the component mounts or when navigating to this page
   useEffect(() => {
-    dispatch(getTransactions());
-    dispatch(getCategories());
-  }, [dispatch]);
+    refreshData();
+  }, [refreshData, location.pathname]);
+
+  // Also refresh when the user changes
+  useEffect(() => {
+    if (sessionUser) {
+      refreshData();
+    }
+  }, [sessionUser, refreshData]);
 
   useEffect(() => {
     if (transactions.length > 0) {
@@ -108,6 +128,11 @@ function Dashboard() {
         total,
       }));
   }, [transactions, categories]);
+
+  // You can add a loading indicator
+  if (isLoading && transactions.length === 0) {
+    return <div className="loading">Loading dashboard data...</div>;
+  }
 
   return (
     <div className="dashboard-container">
