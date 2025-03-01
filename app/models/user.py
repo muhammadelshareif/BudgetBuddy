@@ -15,12 +15,12 @@ class User(db.Model, UserMixin):
     hashed_password = db.Column(db.String(255), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
 
     # Relationships
     transactions = db.relationship('Transaction', back_populates='user', cascade='all, delete-orphan')
     categories = db.relationship('Category', back_populates='user', cascade='all, delete-orphan')
+    budgets = db.relationship('Budget', back_populates='user', cascade='all, delete-orphan')
+    savings_goals = db.relationship('SavingsGoal', back_populates='user', cascade='all, delete-orphan')
 
     @property
     def password(self):

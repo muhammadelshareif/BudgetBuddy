@@ -8,11 +8,15 @@ import thunk from "redux-thunk";
 import sessionReducer from "./session";
 import categoryReducer from "./categories";
 import transactionReducer from "./transactions";
+import budgetReducer from "./budgets";
+import savingsReducer from "./savings";
 
 const rootReducer = combineReducers({
   session: sessionReducer,
   categories: categoryReducer,
   transactions: transactionReducer,
+  budgets: budgetReducer,
+  savings: savingsReducer,
 });
 
 let enhancer;

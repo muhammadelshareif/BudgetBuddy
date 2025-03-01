@@ -8,6 +8,10 @@ import CategoryForm from "../components/Categories/CategoryForm";
 import TransactionList from "../components/Transactions/TransactionList";
 import TransactionForm from "../components/Transactions/TransactionForm";
 import { useSelector } from "react-redux";
+import BudgetList from "../components/Budgets/BudgetList";
+import BudgetForm from "../components/Budgets/BudgetForm";
+import SavingsList from "../components/Savings/SavingsList";
+import SavingsForm from "../components/Savings/SavingsForm";
 
 // Create a protected route wrapper
 const ProtectedRoute = ({ children }) => {
@@ -77,6 +81,54 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <TransactionForm />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "budgets",
+        element: (
+          <ProtectedRoute>
+            <BudgetList />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "budgets/new",
+        element: (
+          <ProtectedRoute>
+            <BudgetForm />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "budgets/:budgetId/edit",
+        element: (
+          <ProtectedRoute>
+            <BudgetForm />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "savings",
+        element: (
+          <ProtectedRoute>
+            <SavingsList />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "savings/new",
+        element: (
+          <ProtectedRoute>
+            <SavingsForm />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "savings/:goalId/edit",
+        element: (
+          <ProtectedRoute>
+            <SavingsForm />
           </ProtectedRoute>
         ),
       },

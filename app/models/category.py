@@ -17,6 +17,7 @@ class Category(db.Model):
     # Relationships
     user = db.relationship('User', back_populates='categories')
     transactions = db.relationship('Transaction', back_populates='category', cascade='all, delete-orphan')
+    budgets = db.relationship('Budget', back_populates='category', cascade='all, delete-orphan')
 
     def to_dict(self):
         return {

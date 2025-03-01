@@ -135,3 +135,95 @@
   background-color: #007bff;
   border-radius: 4px;
 }
+
+.budget-summary-list {
+  margin-top: 15px;
+}
+
+.budget-summary-item {
+  margin-bottom: 20px;
+}
+
+.budget-summary-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.budget-spent {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 5px;
+}
+
+.budget-progress-container {
+  height: 8px;
+  background-color: #e9ecef;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 5px;
+}
+
+.budget-progress-bar {
+  height: 100%;
+  background-color: #28a745;
+  border-radius: 4px;
+}
+
+.budget-progress-bar.exceeded {
+  background-color: #dc3545;
+}
+
+.budget-progress-label {
+  text-align: right;
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.savings-summary-list {
+  margin-top: 15px;
+}
+
+.savings-summary-item {
+  margin-bottom: 20px;
+}
+
+.savings-summary-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.savings-name {
+  font-weight: 500;
+}
+
+.savings-amounts {
+  font-size: 0.9rem;
+}
+
+.savings-progress-container {
+  height: 8px;
+  background-color: #e9ecef;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 5px;
+}
+
+.savings-progress-bar {
+  height: 100%;
+  background-color: #28a745;
+  border-radius: 4px;
+}
+
+.savings-progress-bar.complete {
+  background-color: #007bff;
+}
+
+.savings-progress-label {
+  text-align: right;
+  font-size: 0.8rem;
+  color: #666;
+}

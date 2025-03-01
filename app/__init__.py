@@ -9,6 +9,8 @@ from .api.user_routes import user_routes
 from .api.auth_routes import auth_routes
 from .api.category_routes import category_routes
 from .api.transaction_routes import transaction_routes
+from .api.budget_routes import budget_routes
+from .api.savings_routes import savings_routes
 from .seeds import seed_commands
 from .config import Config
 
@@ -32,18 +34,14 @@ app.register_blueprint(user_routes, url_prefix='/api/users')
 app.register_blueprint(auth_routes, url_prefix='/api/auth')
 app.register_blueprint(category_routes, url_prefix='/api/categories')
 app.register_blueprint(transaction_routes, url_prefix='/api/transactions')
+app.register_blueprint(budget_routes, url_prefix='/api/budgets')
+app.register_blueprint(savings_routes, url_prefix='/api/savings')
 db.init_app(app)
 Migrate(app, db)
 
 # Application Security
 CORS(app)
 
-
-# Since we are deploying with Docker and Flask,
-# we won't be using a buildpack when we deploy to Heroku.
-# Therefore, we need to make sure that in production any
-# request made over http is redirected to https.
-# Well.........
 @app.before_request
 def https_redirect():
     if os.environ.get('FLASK_ENV') == 'production':

@@ -3,6 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import { getTransactions } from "../../redux/transactions";
 import { getCategories } from "../../redux/categories";
+import { getBudgets } from "../../redux/budgets";
+import { getSavingsGoals } from "../../redux/savings";
 import { Link } from "react-router-dom";
 import "./Dashboard.css";
 
@@ -23,11 +25,24 @@ function Dashboard() {
     byId: {},
     allIds: [],
   };
+  const budgetsState = useSelector((state) => state.budgets) || {
+    byId: {},
+    allIds: [],
+  };
+  const savingsState = useSelector((state) => state.savings) || {
+    byId: {},
+    allIds: [],
+  };
 
   // Create a refresh function
   const refreshData = useCallback(async () => {
     setIsLoading(true);
-    await Promise.all([dispatch(getTransactions()), dispatch(getCategories())]);
+    await Promise.all([
+      dispatch(getTransactions()),
+      dispatch(getCategories()),
+      dispatch(getBudgets()),
+      dispatch(getSavingsGoals()),
+    ]);
     setIsLoading(false);
   }, [dispatch]);
 
@@ -42,6 +57,20 @@ function Dashboard() {
   const categories = useMemo(() => {
     return categoriesState.byId || {};
   }, [categoriesState]);
+
+  // Memoize budgets array
+  const budgets = useMemo(() => {
+    return (budgetsState.allIds || [])
+      .map((id) => budgetsState.byId?.[id])
+      .filter(Boolean);
+  }, [budgetsState]);
+
+  // Memoize savings goals array
+  const savingsGoals = useMemo(() => {
+    return (savingsState.allIds || [])
+      .map((id) => savingsState.byId?.[id])
+      .filter(Boolean);
+  }, [savingsState]);
 
   const [monthlyData, setMonthlyData] = useState({
     income: 0,
@@ -129,6 +158,189 @@ function Dashboard() {
       }));
   }, [transactions, categories]);
 
+  // Budget Summary Component
+  const BudgetSummary = () => {
+    const currentBudgets = useMemo(() => {
+      const now = new Date();
+      return budgets.filter(
+        (budget) =>
+          budget.month === now.getMonth() + 1 &&
+          budget.year === now.getFullYear()
+      );
+    }, []);
+
+    // Calculate budget progress
+    const budgetProgress = useMemo(() => {
+      const progress = {};
+      const currentMonth = new Date().getMonth() + 1;
+      const currentYear = new Date().getFullYear();
+
+      // Get transactions for the current month/year
+      const monthTransactions = transactions.filter((transaction) => {
+        if (!transaction?.transaction_date) return false;
+        const date = new Date(transaction.transaction_date);
+        return (
+          date.getMonth() + 1 === currentMonth &&
+          date.getFullYear() === currentYear
+        );
+      });
+
+      // Calculate totals by category
+      currentBudgets.forEach((budget) => {
+        const categoryTransactions = monthTransactions.filter(
+          (t) => t.category_id === budget.category_id && t.type === "expense"
+        );
+
+        const spent = categoryTransactions.reduce(
+          (sum, t) => sum + parseFloat(t.amount || 0),
+          0
+        );
+
+        progress[budget.id] = {
+          spent,
+          remaining: parseFloat(budget.amount) - spent,
+          percentage: Math.min(100, (spent / parseFloat(budget.amount)) * 100),
+        };
+      });
+
+      return progress;
+    }, [currentBudgets, transactions]);
+
+    if (currentBudgets.length === 0) {
+      return (
+        <div className="dashboard-section">
+          <div className="section-header">
+            <h3>Budget Goals</h3>
+            <Link to="/budgets" className="view-all-link">
+              Set Budgets
+            </Link>
+          </div>
+          <p>No budget goals set for this month</p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="dashboard-section">
+        <div className="section-header">
+          <h3>Budget Goals</h3>
+          <Link to="/budgets" className="view-all-link">
+            View All
+          </Link>
+        </div>
+
+        <div className="budget-summary-list">
+          {currentBudgets.slice(0, 3).map((budget) => {
+            const category = categories[budget.category_id];
+            const progress = budgetProgress[budget.id] || {
+              spent: 0,
+              remaining: parseFloat(budget.amount),
+              percentage: 0,
+            };
+
+            return (
+              <div key={budget.id} className="budget-summary-item">
+                <div className="budget-summary-header">
+                  <span className="category-name">
+                    {category?.name || "Unknown"}
+                  </span>
+                  <span className="budget-amount">
+                    ${parseFloat(budget.amount).toFixed(2)}
+                  </span>
+                </div>
+                <div className="budget-spent">
+                  <span>Spent: ${progress.spent.toFixed(2)}</span>
+                  <span>Remaining: ${progress.remaining.toFixed(2)}</span>
+                </div>
+                <div className="budget-progress-container">
+                  <div
+                    className={`budget-progress-bar ${
+                      progress.percentage >= 100 ? "exceeded" : ""
+                    }`}
+                    style={{ width: `${progress.percentage}%` }}
+                  ></div>
+                </div>
+                <div className="budget-progress-label">
+                  {progress.percentage.toFixed(0)}% used
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  };
+
+  // Savings Summary Component
+  const SavingsSummary = () => {
+    // Sort savings goals by progress percentage (highest first)
+    const sortedGoals = useMemo(() => {
+      return [...savingsGoals]
+        .sort((a, b) => {
+          const aProgress = a.current_amount / a.target_amount;
+          const bProgress = b.current_amount / b.target_amount;
+          return bProgress - aProgress;
+        })
+        .slice(0, 3);
+    }, [savingsGoals]);
+
+    if (sortedGoals.length === 0) {
+      return (
+        <div className="dashboard-section">
+          <div className="section-header">
+            <h3>Savings Goals</h3>
+            <Link to="/savings" className="view-all-link">
+              Set Goals
+            </Link>
+          </div>
+          <p>No savings goals set</p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="dashboard-section">
+        <div className="section-header">
+          <h3>Savings Goals</h3>
+          <Link to="/savings" className="view-all-link">
+            View All
+          </Link>
+        </div>
+
+        <div className="savings-summary-list">
+          {sortedGoals.map((goal) => {
+            const progressPercent =
+              (goal.current_amount / goal.target_amount) * 100;
+
+            return (
+              <div key={goal.id} className="savings-summary-item">
+                <div className="savings-summary-header">
+                  <span className="savings-name">{goal.name}</span>
+                  <span className="savings-amounts">
+                    ${goal.current_amount.toFixed(2)} / $
+                    {goal.target_amount.toFixed(2)}
+                  </span>
+                </div>
+                <div className="savings-progress-container">
+                  <div
+                    className={`savings-progress-bar ${
+                      progressPercent >= 100 ? "complete" : ""
+                    }`}
+                    style={{ width: `${Math.min(100, progressPercent)}%` }}
+                  ></div>
+                </div>
+                <div className="savings-progress-label">
+                  {progressPercent.toFixed(0)}% saved
+                  {progressPercent >= 100 && " 🎉"}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  };
+
   // You can add a loading indicator
   if (isLoading && transactions.length === 0) {
     return <div className="loading">Loading dashboard data...</div>;
@@ -196,6 +408,10 @@ function Dashboard() {
             </table>
           )}
         </div>
+
+        <BudgetSummary />
+
+        <SavingsSummary />
 
         <div className="dashboard-section">
           <div className="section-header">

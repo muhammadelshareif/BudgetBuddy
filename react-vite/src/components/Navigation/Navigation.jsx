@@ -23,6 +23,8 @@ function Navigation() {
             <NavLink to="/dashboard">Dashboard</NavLink>
             <NavLink to="/transactions">Transactions</NavLink>
             <NavLink to="/categories">Categories</NavLink>
+            <NavLink to="/budgets">Budgets</NavLink>
+            <NavLink to="/savings">Savings Goals</NavLink>
           </>
         )}
         {!isAuthPage && <ProfileButton />}
