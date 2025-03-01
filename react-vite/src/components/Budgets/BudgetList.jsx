@@ -54,14 +54,14 @@ function BudgetList() {
   const budgetProgress = useMemo(() => {
     const progress = {};
 
-    // Get transactions for the current month/year
+    // Format month with leading zero if needed
+    const monthStr = String(currentMonth).padStart(2, "0");
+    const monthPrefix = `${currentYear}-${monthStr}`;
+
+    // Filter transactions by selected month
     const monthTransactions = transactions.filter((transaction) => {
       if (!transaction?.transaction_date) return false;
-      const date = new Date(transaction.transaction_date);
-      return (
-        date.getMonth() + 1 === currentMonth &&
-        date.getFullYear() === currentYear
-      );
+      return transaction.transaction_date.startsWith(monthPrefix);
     });
 
     // Calculate totals by category
@@ -158,7 +158,7 @@ function BudgetList() {
           <select id="year" value={currentYear} onChange={handleYearChange}>
             {Array.from(
               { length: 5 },
-              (_, i) => new Date().getFullYear() + i
+              (_, i) => new Date().getFullYear() + i - 1 // Include past year
             ).map((year) => (
               <option key={year} value={year}>
                 {year}

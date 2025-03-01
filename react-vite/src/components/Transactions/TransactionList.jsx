@@ -36,9 +36,19 @@ function TransactionList() {
     endDate: "",
   });
 
+  const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
-    dispatch(getTransactions());
-    dispatch(getCategories());
+    const fetchData = async () => {
+      setIsLoading(true);
+      await Promise.all([
+        dispatch(getTransactions()),
+        dispatch(getCategories()),
+      ]);
+      setIsLoading(false);
+    };
+
+    fetchData();
   }, [dispatch]);
 
   const handleDelete = async (transactionId) => {
@@ -54,6 +64,11 @@ function TransactionList() {
       [name]: value,
     });
   };
+
+  // Log transactions for debugging
+  useEffect(() => {
+    console.log("All transactions:", transactions);
+  }, [transactions]);
 
   // Memoize filtered transactions
   const filteredTransactions = useMemo(() => {
@@ -74,18 +89,28 @@ function TransactionList() {
       }
 
       // Filter by date range
-      if (
-        filters.startDate &&
-        new Date(transaction.transaction_date) < new Date(filters.startDate)
-      ) {
-        return false;
+      if (filters.startDate) {
+        const transactionDate = new Date(transaction.transaction_date);
+        const startDate = new Date(filters.startDate);
+        // Reset hours to compare dates only
+        transactionDate.setHours(0, 0, 0, 0);
+        startDate.setHours(0, 0, 0, 0);
+
+        if (transactionDate < startDate) {
+          return false;
+        }
       }
 
-      if (
-        filters.endDate &&
-        new Date(transaction.transaction_date) > new Date(filters.endDate)
-      ) {
-        return false;
+      if (filters.endDate) {
+        const transactionDate = new Date(transaction.transaction_date);
+        const endDate = new Date(filters.endDate);
+        // Reset hours and set to end of day for proper comparison
+        transactionDate.setHours(0, 0, 0, 0);
+        endDate.setHours(23, 59, 59, 999);
+
+        if (transactionDate > endDate) {
+          return false;
+        }
       }
 
       return true;
@@ -95,10 +120,13 @@ function TransactionList() {
   // Memoize sorted transactions
   const sortedTransactions = useMemo(() => {
     return [...filteredTransactions].sort(
-      (a, b) =>
-        new Date(b?.transaction_date || 0) - new Date(a?.transaction_date || 0)
+      (a, b) => new Date(b.transaction_date) - new Date(a.transaction_date)
     );
   }, [filteredTransactions]);
+
+  if (isLoading) {
+    return <div className="loading">Loading transactions...</div>;
+  }
 
   return (
     <div className="transaction-list-container">

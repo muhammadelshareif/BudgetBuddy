@@ -92,25 +92,12 @@ function Dashboard() {
 
   useEffect(() => {
     if (transactions.length > 0) {
-      // Calculate monthly totals
-      const currentDate = new Date();
-      const currentMonth = currentDate.getMonth();
-      const currentYear = currentDate.getFullYear();
-
-      const monthlyTransactions = transactions.filter((transaction) => {
-        if (!transaction || !transaction.transaction_date) return false;
-        const transactionDate = new Date(transaction.transaction_date);
-        return (
-          transactionDate.getMonth() === currentMonth &&
-          transactionDate.getFullYear() === currentYear
-        );
-      });
-
-      const income = monthlyTransactions
+      // Calculate totals across all transactions
+      const income = transactions
         .filter((t) => t && t.type === "income")
         .reduce((sum, t) => sum + parseFloat(t.amount || 0), 0);
 
-      const expenses = monthlyTransactions
+      const expenses = transactions
         .filter((t) => t && t.type === "expense")
         .reduce((sum, t) => sum + parseFloat(t.amount || 0), 0);
 
@@ -160,33 +147,27 @@ function Dashboard() {
 
   // Budget Summary Component
   const BudgetSummary = () => {
+    // Instead of filtering for a specific month, show all budgets
     const currentBudgets = useMemo(() => {
-      const now = new Date();
-      return budgets.filter(
-        (budget) =>
-          budget.month === now.getMonth() + 1 &&
-          budget.year === now.getFullYear()
-      );
+      return budgets.slice(0, 3); // Just show the first 3 budgets
     }, []);
 
-    // Calculate budget progress
+    // Calculate budget progress for each budget based on its own month/year
     const budgetProgress = useMemo(() => {
       const progress = {};
-      const currentMonth = new Date().getMonth() + 1;
-      const currentYear = new Date().getFullYear();
 
-      // Get transactions for the current month/year
-      const monthTransactions = transactions.filter((transaction) => {
-        if (!transaction?.transaction_date) return false;
-        const date = new Date(transaction.transaction_date);
-        return (
-          date.getMonth() + 1 === currentMonth &&
-          date.getFullYear() === currentYear
-        );
-      });
-
-      // Calculate totals by category
       currentBudgets.forEach((budget) => {
+        // Format month with leading zero if needed
+        const monthStr = String(budget.month).padStart(2, "0");
+        const monthPrefix = `${budget.year}-${monthStr}`;
+
+        // Get transactions for this budget's month/year
+        const monthTransactions = transactions.filter((transaction) => {
+          if (!transaction?.transaction_date) return false;
+          return transaction.transaction_date.startsWith(monthPrefix);
+        });
+
+        // Calculate totals for this category
         const categoryTransactions = monthTransactions.filter(
           (t) => t.category_id === budget.category_id && t.type === "expense"
         );
@@ -200,6 +181,8 @@ function Dashboard() {
           spent,
           remaining: parseFloat(budget.amount) - spent,
           percentage: Math.min(100, (spent / parseFloat(budget.amount)) * 100),
+          month: budget.month,
+          year: budget.year,
         };
       });
 
@@ -215,10 +198,26 @@ function Dashboard() {
               Set Budgets
             </Link>
           </div>
-          <p>No budget goals set for this month</p>
+          <p>No budget goals set</p>
         </div>
       );
     }
+
+    // Array of month names for display
+    const monthNames = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
 
     return (
       <div className="dashboard-section">
@@ -230,19 +229,22 @@ function Dashboard() {
         </div>
 
         <div className="budget-summary-list">
-          {currentBudgets.slice(0, 3).map((budget) => {
+          {currentBudgets.map((budget) => {
             const category = categories[budget.category_id];
             const progress = budgetProgress[budget.id] || {
               spent: 0,
               remaining: parseFloat(budget.amount),
               percentage: 0,
+              month: budget.month,
+              year: budget.year,
             };
 
             return (
               <div key={budget.id} className="budget-summary-item">
                 <div className="budget-summary-header">
                   <span className="category-name">
-                    {category?.name || "Unknown"}
+                    {category?.name || "Unknown"} (
+                    {monthNames[budget.month - 1]} {budget.year})
                   </span>
                   <span className="budget-amount">
                     ${parseFloat(budget.amount).toFixed(2)}
@@ -352,12 +354,12 @@ function Dashboard() {
 
       <div className="summary-cards">
         <div className="summary-card income">
-          <h3>Monthly Income</h3>
+          <h3>Total Income</h3>
           <p className="amount">${monthlyData.income.toFixed(2)}</p>
         </div>
 
         <div className="summary-card expenses">
-          <h3>Monthly Expenses</h3>
+          <h3>Total Expenses</h3>
           <p className="amount">${monthlyData.expenses.toFixed(2)}</p>
         </div>
 
